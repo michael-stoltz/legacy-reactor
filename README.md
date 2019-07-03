@@ -1,5 +1,7 @@
 # Legacy Reactor
 
+[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
+
 Reactor is a standalone implementation of the [vue](https://vuejs.org/) 2.x observer code for reactivity.
 
 The target environment is ES5+ and will therefore work on any browser that supports it.
