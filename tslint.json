@@ -1,0 +1,12 @@
+{
+  "extends": ["tslint:recommended", "tslint-config-prettier"],
+  "rules": {
+    "variable-name": [
+      true, "ban-keywords", "check-format", "allow-leading-underscore"
+    ],
+    "member-ordering": false,
+    "semicolon": [true, "always"],
+    "object-literal-sort-keys": false,
+    "only-arrow-functions": false
+  }
+}

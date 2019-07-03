@@ -1,0 +1,56 @@
+{
+  "name": "@microlibs/legacy-reactor",
+  "version": "0.2.0",
+  "description": "Reactive state library based on the vue.js 2.x observer code",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "repository": "https://github.com/michael-stoltz/legacy-reactor",
+  "files": [
+    "/dist/**/*"
+  ],
+  "scripts": {
+    "lint": "tslint -p tsconfig.json",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "commit": "git-cz",
+    "test": "jest --config jestconfig.json",
+    "cov": "jest --config jestconfig.json --coverage && npm run cov:open",
+    "cov:open": "open-cli coverage/lcov-report/index.html",
+    "doc": "typedoc src && npm run doc:open",
+    "doc:open": "open-cli documentation/index.html",
+    "build": "tsc",
+    "version": "standard-version",
+    "prepublish": "npm run lint && npm run format && npm run test && rimraf dist && npm run build"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@commitlint/cli": "^8.0.0",
+    "@commitlint/config-conventional": "^8.0.0",
+    "@types/jest": "^24.0.6",
+    "@types/node": "^12.0.0",
+    "commitizen": "^3.1.1",
+    "cz-conventional-changelog": "^2.1.0",
+    "husky": "^3.0.0",
+    "jest": "^24.1.0",
+    "open-cli": "^5.0.0",
+    "prettier": "^1.16.4",
+    "rimraf": "^2.6.3",
+    "standard-version": "^6.0.1",
+    "ts-jest": "^24.0.0",
+    "ts-node": "^8.1.0",
+    "tslint": "^5.12.1",
+    "tslint-config-prettier": "^1.18.0",
+    "typedoc": "^0.14.2",
+    "typescript": "^3.3.3333"
+  },
+  "author": "michael.stoltz@derivco.co.za",
+  "license": "MIT",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}

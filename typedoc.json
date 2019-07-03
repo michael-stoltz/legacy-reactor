@@ -1,0 +1,6 @@
+{
+  "out": "documentation",
+  "exclude": [
+    "**/src/**/*.spec.ts"
+  ]
+}

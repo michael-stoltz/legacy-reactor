@@ -1,0 +1,11 @@
+{
+  "javascript.preferences.quoteStyle": "single",
+  "typescript.preferences.quoteStyle": "single",
+  "search.exclude": {
+    "**/coverage": true,
+    "**/documentation": true
+  },
+  "editor.detectIndentation": false,
+  "editor.tabSize": 2,
+  "editor.formatOnSave": true
+}
