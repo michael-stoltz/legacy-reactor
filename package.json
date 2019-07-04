@@ -16,10 +16,10 @@
     "cov": "jest --config jestconfig.json --coverage && npm run cov:open",
     "cov:open": "open-cli coverage/lcov-report/index.html",
     "doc": "typedoc src && npm run doc:open",
-    "doc:open": "open-cli documentation/index.html",
-    "build": "tsc",
+    "doc:open": "open-cli docs/index.html",
+    "build": "rimraf dist && tsc",
     "version": "standard-version",
-    "prepublish": "npm run lint && npm run format && npm run test && rimraf dist && npm run build"
+    "prepublish": "npm run lint && npm run format && npm run test && npm run build"
   },
   "dependencies": {},
   "devDependencies": {
