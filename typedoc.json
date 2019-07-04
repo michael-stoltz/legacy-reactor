@@ -1,5 +1,5 @@
 {
-  "out": "documentation",
+  "out": "docs",
   "exclude": [
     "**/src/**/*.spec.ts"
   ]
