@@ -17,7 +17,7 @@
     "cov:open": "open-cli coverage/lcov-report/index.html",
     "doc": "typedoc src && npm run doc:open",
     "doc:open": "open-cli docs/index.html",
-    "build": "rimraf dist && tsc",
+    "build": "npm run doc && rimraf dist && tsc",
     "version": "standard-version",
     "prepublish": "npm run lint && npm run format && npm run test && npm run build"
   },
