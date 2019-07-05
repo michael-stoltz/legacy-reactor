@@ -5,6 +5,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/michael-stoltz/legacy-reactor/badge.svg?branch=master)](https://coveralls.io/github/michael-stoltz/legacy-reactor?branch=master)
 [![Greenkeeper badge](https://badges.greenkeeper.io/michael-stoltz/legacy-reactor.svg)](https://greenkeeper.io/)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+[![docs: typedoc](https://img.shields.io/badge/docs-typedoc-blue.svg)](https://michael-stoltz.github.io/legacy-reactor/)
 
 Reactor is a standalone implementation of the [vue](https://vuejs.org/) 2.x observer code for reactivity.
 
