@@ -253,6 +253,8 @@ function modifyPropertyWatcherList<T extends object>(observedData: T, path: stri
  */
 export function addPropertyWatcher<T>(data: object, path: string, watcher: WatcherFunction<T>) {
   modifyPropertyWatcherList(data, path, watcher, 'add');
+
+  return watcher;
 }
 
 /**

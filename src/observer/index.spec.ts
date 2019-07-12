@@ -678,13 +678,9 @@ describe('observer functions', () => {
     it('adds a watcher from a property on an observed object', () => {
       const observed = observe(createTestObject());
 
-      const simpleWatcher = jest.fn();
-      const arrayWatcher = jest.fn();
-      const nestedWatcher = jest.fn();
-
-      addPropertyWatcher(observed, 'number', simpleWatcher);
-      addPropertyWatcher(observed, 'array.0', arrayWatcher);
-      addPropertyWatcher(observed, 'nestedObject.key', nestedWatcher);
+      const simpleWatcher = addPropertyWatcher(observed, 'number', jest.fn());
+      const arrayWatcher = addPropertyWatcher(observed, 'array.0', jest.fn());
+      const nestedWatcher = addPropertyWatcher(observed, 'nestedObject.key', jest.fn());
 
       observed.number = 50;
       observed.array[0] = 99;

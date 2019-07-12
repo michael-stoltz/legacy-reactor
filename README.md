@@ -6,7 +6,7 @@
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 [![docs: typedoc](https://img.shields.io/badge/docs-typedoc-blue.svg)](https://michael-stoltz.github.io/legacy-reactor/)
 
-Reactor is a standalone implementation of the [vue](https://vuejs.org/) 2.x observer code for reactivity.
+The Legacy Reactor is a standalone implementation of the [vue](https://vuejs.org/) 2.x observer code for reactivity.
 
 The target environment is ES5+ and will therefore work on any browser that supports it.
 
