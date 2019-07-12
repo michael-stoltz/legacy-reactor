@@ -1,4 +1,9 @@
+import consoleReference from 'console';
 import Observable from '../../src/observer/observable';
+
+global.console = consoleReference;
+const errorOutput = jest.fn();
+consoleReference.error = errorOutput;
 
 describe('Observable', () => {
   function createMockObserver() {
@@ -133,10 +138,7 @@ describe('Observable', () => {
       observable.watch(spy);
 
       // @ts-ignore
-      observable._invokeWatchers(60, 55);
-
-      expect(spy).toBeCalledTimes(1);
-      expect(spy).toBeCalledWith(60, 55);
+      expect(observable._watchers).toContain(spy);
     });
 
     it('does not add duplicate watchers', () => {
@@ -147,10 +149,7 @@ describe('Observable', () => {
       observable.watch(spy);
 
       // @ts-ignore
-      observable._invokeWatchers(false, true);
-
-      expect(spy).toBeCalledTimes(1);
-      expect(spy).toBeCalledWith(false, true);
+      expect(observable._watchers).toHaveLength(1);
     });
   });
 
@@ -164,26 +163,20 @@ describe('Observable', () => {
       observable.watch(spy2);
 
       // @ts-ignore
-      observable._invokeWatchers('new value', 'test');
-
-      expect(spy1).toBeCalledTimes(1);
-      expect(spy1).toBeCalledWith('new value', 'test');
-
-      expect(spy2).toBeCalledTimes(1);
-      expect(spy2).toBeCalledWith('new value', 'test');
-
-      spy1.mockClear();
-      spy2.mockClear();
+      expect(observable._watchers).toContain(spy1);
+      // @ts-ignore
+      expect(observable._watchers).toContain(spy2);
+      // @ts-ignore
+      expect(observable._watchers).toHaveLength(2);
 
       observable.unwatch(spy1);
 
       // @ts-ignore
-      observable._invokeWatchers('another new value', 'new value');
-
-      expect(spy1).toBeCalledTimes(0);
-
-      expect(spy2).toBeCalledTimes(1);
-      expect(spy2).toBeCalledWith('another new value', 'new value');
+      expect(observable._watchers).not.toContain(spy1);
+      // @ts-ignore
+      expect(observable._watchers).toContain(spy2);
+      // @ts-ignore
+      expect(observable._watchers).toHaveLength(1);
     });
 
     it('does not cause an issue when trying to remove a watcher that does not exist', () => {
@@ -195,27 +188,42 @@ describe('Observable', () => {
       observable.watch(spy2);
 
       // @ts-ignore
-      observable._invokeWatchers('new value', 'test');
-
-      expect(spy1).toBeCalledTimes(1);
-      expect(spy1).toBeCalledWith('new value', 'test');
-
-      expect(spy2).toBeCalledTimes(1);
-      expect(spy2).toBeCalledWith('new value', 'test');
-
-      spy1.mockClear();
-      spy2.mockClear();
-
-      observable.unwatch(spy1);
-      observable.unwatch(spy1);
-
+      expect(observable._watchers).toContain(spy1);
       // @ts-ignore
-      observable._invokeWatchers('another new value', 'new value');
+      expect(observable._watchers).toContain(spy2);
+      // @ts-ignore
+      expect(observable._watchers).toHaveLength(2);
 
-      expect(spy1).toBeCalledTimes(0);
+      observable.unwatch(spy1);
+      expect(() => observable.unwatch(spy1)).not.toThrow();
+    });
+  });
 
-      expect(spy2).toBeCalledTimes(1);
-      expect(spy2).toBeCalledWith('another new value', 'new value');
+  describe('_invokeWatchers', () => {
+    it('calls registered watcher functions', () => {
+      const observer = new Observable('test');
+      const watcher = jest.fn();
+
+      (observer as any)._watchers.push(watcher);
+
+      (observer as any)._invokeWatchers('new value', 'old value');
+
+      expect(watcher).toBeCalledTimes(1);
+      expect(watcher).toBeCalledWith('new value', 'old value');
+    });
+
+    it('logs an error to the console when a watcher throws an exception', () => {
+      const observer = new Observable('test');
+      const watcher = jest.fn(() => {
+        throw new Error('test');
+      });
+
+      (observer as any)._watchers.push(watcher);
+
+      (observer as any)._invokeWatchers('new value', 'old value');
+
+      expect(watcher).toBeCalledTimes(1);
+      expect(errorOutput).toBeCalledTimes(1);
     });
   });
 

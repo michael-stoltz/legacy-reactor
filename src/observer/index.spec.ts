@@ -1,4 +1,11 @@
-import { defineReactiveProperty, extractObservableFromProperty, navigateToPropertyPath, observe } from '../../src/observer';
+import {
+  addPropertyWatcher,
+  defineReactiveProperty,
+  extractObservableFromProperty,
+  navigateToPropertyPath,
+  observe,
+  removePropertyWatcher,
+} from '../../src/observer';
 import { arrayMethods } from '../../src/observer/array';
 import ComputedObservable from '../../src/observer/computed-observable';
 import Observable from '../../src/observer/observable';
@@ -294,15 +301,13 @@ describe('observer functions', () => {
   });
 
   describe('observe', () => {
-    it('accepts a data object and returns an observed data object with watch and unwatch methods', () => {
+    it('accepts a data object and returns an observed data object', () => {
       const data = createTestObject();
 
       const observed = observe(data);
 
       expect(observed).toBeDefined();
       expect(observed).toBe(data);
-      expect(typeof observed.$watch).toBe('function');
-      expect(typeof observed.$unwatch).toBe('function');
     });
 
     it('throws an error if the type passed to data is not an object', () => {
@@ -357,72 +362,6 @@ describe('observer functions', () => {
 
       data.nested.list.push('marly');
       expect(data.nested.excludeMoe).toEqual(['larry', 'curly', 'marly']);
-    });
-
-    test('you can add watchers to observed objects', () => {
-      const observed = observe(createTestObject());
-
-      const simpleWatcher = jest.fn();
-      const arrayWatcher = jest.fn();
-      const nestedWatcher = jest.fn();
-
-      observed.$watch('number', simpleWatcher);
-      observed.$watch('array.0', arrayWatcher);
-      observed.$watch('nestedObject.key', nestedWatcher);
-
-      observed.number = 50;
-      observed.array[0] = 99;
-      observed.nestedObject.key = 'new_value';
-
-      expect(simpleWatcher).toBeCalledTimes(1);
-      expect(simpleWatcher).toBeCalledWith(50, 5);
-
-      expect(arrayWatcher).toBeCalledTimes(1);
-      expect(arrayWatcher).toBeCalledWith(99, 1);
-
-      expect(nestedWatcher).toBeCalledTimes(1);
-      expect(nestedWatcher).toBeCalledWith('new_value', 'value');
-    });
-
-    test('you can remove watchers from observed objects', () => {
-      const observed = observe(createTestObject());
-
-      const simpleWatcher = jest.fn();
-      const arrayWatcher = jest.fn();
-      const nestedWatcher = jest.fn();
-
-      observed.$watch('number', simpleWatcher);
-      observed.$watch('array.0', arrayWatcher);
-      observed.$watch('nestedObject.key', nestedWatcher);
-
-      observed.number = 50;
-      observed.array[0] = 99;
-      observed.nestedObject.key = 'new_value';
-
-      expect(simpleWatcher).toBeCalledTimes(1);
-      expect(simpleWatcher).toBeCalledWith(50, 5);
-
-      expect(arrayWatcher).toBeCalledTimes(1);
-      expect(arrayWatcher).toBeCalledWith(99, 1);
-
-      expect(nestedWatcher).toBeCalledTimes(1);
-      expect(nestedWatcher).toBeCalledWith('new_value', 'value');
-
-      observed.$unwatch('number', simpleWatcher);
-      observed.$unwatch('array.0', arrayWatcher);
-      observed.$unwatch('nestedObject.key', nestedWatcher);
-
-      simpleWatcher.mockClear();
-      arrayWatcher.mockClear();
-      nestedWatcher.mockClear();
-
-      observed.number = 10;
-      observed.array[0] = 20;
-      observed.nestedObject.key = 'old_value';
-
-      expect(simpleWatcher).toBeCalledTimes(0);
-      expect(arrayWatcher).toBeCalledTimes(0);
-      expect(nestedWatcher).toBeCalledTimes(0);
     });
 
     /**
@@ -683,7 +622,7 @@ describe('observer functions', () => {
     });
   });
 
-  describe('findPropertyFromPath', () => {
+  describe('navigateToPropertyPath', () => {
     it('calls a callback when it finds the property from the specified path', () => {
       const obj = {
         prop: 55,
@@ -732,6 +671,96 @@ describe('observer functions', () => {
       }
 
       expect(failed).toBe(true);
+    });
+  });
+
+  describe('addPropertyWatcher', () => {
+    it('adds a watcher from a property on an observed object', () => {
+      const observed = observe(createTestObject());
+
+      const simpleWatcher = addPropertyWatcher(observed, 'number', jest.fn());
+      const arrayWatcher = addPropertyWatcher(observed, 'array.0', jest.fn());
+      const nestedWatcher = addPropertyWatcher(observed, 'nestedObject.key', jest.fn());
+
+      observed.number = 50;
+      observed.array[0] = 99;
+      observed.nestedObject.key = 'new_value';
+
+      expect(simpleWatcher).toBeCalledTimes(1);
+      expect(simpleWatcher).toBeCalledWith(50, 5);
+
+      expect(arrayWatcher).toBeCalledTimes(1);
+      expect(arrayWatcher).toBeCalledWith(99, 1);
+
+      expect(nestedWatcher).toBeCalledTimes(1);
+      expect(nestedWatcher).toBeCalledWith('new_value', 'value');
+    });
+
+    it('throws an error when the property is not observable', () => {
+      const notObserved = {
+        price: 55,
+        qty: 20,
+      };
+
+      expect(() => {
+        // tslint:disable-next-line:no-console
+        addPropertyWatcher(notObserved, 'price', value => console.log(value));
+      }).toThrowError(new Error('Property is not an observable property.'));
+    });
+  });
+
+  describe('removePropertyWatcher', () => {
+    it('removes a watcher from a property on an observed object', () => {
+      const observed = observe(createTestObject());
+
+      const simpleWatcher = jest.fn();
+      const arrayWatcher = jest.fn();
+      const nestedWatcher = jest.fn();
+
+      addPropertyWatcher(observed, 'number', simpleWatcher);
+      addPropertyWatcher(observed, 'array.0', arrayWatcher);
+      addPropertyWatcher(observed, 'nestedObject.key', nestedWatcher);
+
+      observed.number = 50;
+      observed.array[0] = 99;
+      observed.nestedObject.key = 'new_value';
+
+      expect(simpleWatcher).toBeCalledTimes(1);
+      expect(simpleWatcher).toBeCalledWith(50, 5);
+
+      expect(arrayWatcher).toBeCalledTimes(1);
+      expect(arrayWatcher).toBeCalledWith(99, 1);
+
+      expect(nestedWatcher).toBeCalledTimes(1);
+      expect(nestedWatcher).toBeCalledWith('new_value', 'value');
+
+      removePropertyWatcher(observed, 'number', simpleWatcher);
+      removePropertyWatcher(observed, 'array.0', arrayWatcher);
+      removePropertyWatcher(observed, 'nestedObject.key', nestedWatcher);
+
+      simpleWatcher.mockClear();
+      arrayWatcher.mockClear();
+      nestedWatcher.mockClear();
+
+      observed.number = 10;
+      observed.array[0] = 20;
+      observed.nestedObject.key = 'old_value';
+
+      expect(simpleWatcher).toBeCalledTimes(0);
+      expect(arrayWatcher).toBeCalledTimes(0);
+      expect(nestedWatcher).toBeCalledTimes(0);
+    });
+
+    it('throws an error when the property is not observable', () => {
+      const notObserved = {
+        price: 55,
+        qty: 20,
+      };
+
+      expect(() => {
+        // tslint:disable-next-line:no-console
+        removePropertyWatcher(notObserved, 'price', value => console.log(value));
+      }).toThrowError(new Error('Property is not an observable property.'));
     });
   });
 });

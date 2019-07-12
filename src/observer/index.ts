@@ -7,17 +7,7 @@ import { isObject, isPlainObject, prototypeAugment } from '../util';
 import { arrayMethods } from './array';
 import ComputedObservable from './computed-observable';
 import Observable from './observable';
-import {
-  ATTACHED_OBSERVABLE_KEY,
-  ComputedFunction,
-  IObservable,
-  IObservableReference,
-  IWatchable,
-  ObservedData,
-  UNWATCH_FUNCTION_KEY,
-  WATCH_FUNCTION_KEY,
-  WatcherFunction,
-} from './types';
+import { ATTACHED_OBSERVABLE_KEY, ComputedFunction, IObservable, IObservableReference, ObservedData, WatcherFunction } from './types';
 
 /**
  * The [[IObservable]] currently being created and evaluated.
@@ -45,50 +35,18 @@ let currentEvaluatingObservable: IObservable<any> | undefined;
  * console.log(observed); // output: { price: 55, quantity: 10, total: 550 }
  * ```
  *
- * ## Watchers
- *
- * Watchers are functions that get run when a data change occurs for a property.
- *
- * ```typescript
- * const observed = observe({
- *  price: 55,
- *  quantity: 10,
- *  total() {
- *    return this.price * this.quantity;
- *  }
- * });
- *
- * observed.$watch('total', (value, oldValue) => {
- *  console.log(value, oldValue);
- * });
- *
- * observed.price = 100; // output: 1000 550
- * ```
- *
  * @param data - Object to process.
  *
  * @typeparam T - Plain javascript object.
  */
-export function observe<T extends object>(data: T): ObservedData<T> & IWatchable {
+export function observe<T extends object>(data: T): ObservedData<T> {
   if (isPlainObject(data)) {
-    Object.defineProperty(data, WATCH_FUNCTION_KEY, {
-      value: <U>(path: string, watcher: WatcherFunction<U>) => {
-        modifyPropertyWatcherList(data, path, watcher, 'add');
-      },
-    });
-
-    Object.defineProperty(data, UNWATCH_FUNCTION_KEY, {
-      value: <U>(path: string, watcher: WatcherFunction<U>) => {
-        modifyPropertyWatcherList(data, path, watcher, 'remove');
-      },
-    });
-
     observeObject(data as T);
   } else {
     throw new Error('Parameter provided is not a plain javascript object.');
   }
 
-  return data as ObservedData<T> & IWatchable;
+  return data as ObservedData<T>;
 }
 
 /**
@@ -267,4 +225,68 @@ function modifyPropertyWatcherList<T extends object>(observedData: T, path: stri
       throw new Error('Property is not an observable property.');
     }
   });
+}
+
+/**
+ * Adds a watcher function to a property that gets called when the property changes.
+ *
+ * ```typescript
+ * const observed = observe({
+ *  price: 43,
+ *  qty: 10,
+ *  total() {
+ *    return this.qty * this.price;
+ *  }
+ * });
+ *
+ * addPropertyWatcher(observed, 'price', (value, oldValue) => {
+ *  console.log(value, oldValue);
+ * });
+ *
+ * // watcher is called on data change
+ * observed.price = 50; // output: 50 43
+ * ```
+ *
+ * @param data - Object observed with [[observe]].
+ * @param path - Path to the property on the data object.
+ * @param watcher - Function to add to the properties' watchers.
+ */
+export function addPropertyWatcher<T>(data: object, path: string, watcher: WatcherFunction<T>) {
+  modifyPropertyWatcherList(data, path, watcher, 'add');
+
+  return watcher;
+}
+
+/**
+ * Removes a watcher function from a property.
+ *
+ * ```typescript
+ * const observed = observe({
+ *  price: 43,
+ *  qty: 10,
+ *  total() {
+ *    return this.qty * this.price;
+ *  }
+ * });
+ *
+ * const watcher = (value, oldValue) => {
+ *  console.log(value, oldValue);
+ * }
+ *
+ * addPropertyWatcher(observed, 'price', watcher);
+ *
+ * // watcher is called on data change
+ * observed.price = 50; // output: 50 43
+ *
+ * removePropertyWatcher(observed, 'price', watcher);
+ *
+ * // no output since watcher was removed
+ * observed.price = 90;
+ * ```
+ * @param data - Object observed with [[observe]].
+ * @param path - Path to the property on the data object.
+ * @param watcher - Function to remove from the properties' watchers.
+ */
+export function removePropertyWatcher<T>(data: object, path: string, watcher: WatcherFunction<T>) {
+  modifyPropertyWatcherList(data, path, watcher, 'remove');
 }

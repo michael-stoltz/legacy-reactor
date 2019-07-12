@@ -111,30 +111,3 @@ export type ReturnType<T> = T extends (...args: any[]) => infer R ? R : T;
  */
 // tslint:disable:ban-types
 export type ObservedData<T> = { [P in keyof T]: T[P] extends Function ? ReturnType<T[P]> : ObservedData<T[P]> };
-
-/**
- * Function signature used to add and remove watchers from a property.
- *
- * @typeparam T - Type of the parameters in the [[WatcherFunction]].
- */
-type WatchModifierFunction = <T>(path: string, watcher: WatcherFunction<T>) => void;
-
-/**
- * Key from the IWatchable interface for the watch function.
- */
-export const WATCH_FUNCTION_KEY = '$watch';
-
-/**
- * Key from the IWatchable interface for the unwatch function.
- */
-export const UNWATCH_FUNCTION_KEY = '$unwatch';
-
-/**
- * Interface specifying that the implementing object is watchable.
- */
-export interface IWatchable {
-  // If you change this key also reflect the change on 'WATCH_FUNCTION_KEY'.
-  $watch: WatchModifierFunction;
-  // If you change this key also reflect the change on 'UNWATCH_FUNCTION_KEY'.
-  $unwatch: WatchModifierFunction;
-}
