@@ -3,7 +3,6 @@
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 [![Build Status](https://travis-ci.org/michael-stoltz/legacy-reactor.svg?branch=master)](https://travis-ci.org/michael-stoltz/legacy-reactor)
 [![Coverage Status](https://coveralls.io/repos/github/michael-stoltz/legacy-reactor/badge.svg?branch=master)](https://coveralls.io/github/michael-stoltz/legacy-reactor?branch=master)
-[![Greenkeeper badge](https://badges.greenkeeper.io/michael-stoltz/legacy-reactor.svg)](https://greenkeeper.io/)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 [![docs: typedoc](https://img.shields.io/badge/docs-typedoc-blue.svg)](https://michael-stoltz.github.io/legacy-reactor/)
 
@@ -71,7 +70,7 @@ Watchers are simple functions that get run when the value of an observed propert
 You can register multiple watchers per property.
 
 ```javascript
-import { observe } from '@microlibs/legacy-reactor';
+import { observe, addPropertyWatcher, removePropertyWatcher } from '@microlibs/legacy-reactor';
 
 const observed = observe({
   price: 55.6,
@@ -82,14 +81,20 @@ const observed = observe({
   },
 });
 
-// The first parameter is the path to the property in the observed data.
+// The first parameter is an observed object
+// The second parameter is the path to the property in the observed data.
 // In case of a nested object {nested: {total: 55 }} you would write 'nested.total'.
-// The second parameter is the function to be called when the value of total changes.
-observed.$watch('total', (value, oldValue) => {
+// The last parameter is the function to be called when the value of total changes.
+const watcher = addPropertyWatcher(observed, 'total', (value, oldValue) => {
   console.log(value, oldValue);
 });
 
 observed.price = 100; // output: 10000 5560
+
+removePropertyWatcher(observed, 'total', watcher);
+
+// No output since the watcher was removed
+observed.price = 60.56;
 ```
 
 # Known Issues

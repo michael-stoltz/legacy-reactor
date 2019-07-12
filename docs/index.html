@@ -68,7 +68,6 @@
 				<p><a href="http://commitizen.github.io/cz-cli/"><img src="https://img.shields.io/badge/commitizen-friendly-brightgreen.svg" alt="Commitizen friendly"></a>
 					<a href="https://travis-ci.org/michael-stoltz/legacy-reactor"><img src="https://travis-ci.org/michael-stoltz/legacy-reactor.svg?branch=master" alt="Build Status"></a>
 					<a href="https://coveralls.io/github/michael-stoltz/legacy-reactor?branch=master"><img src="https://coveralls.io/repos/github/michael-stoltz/legacy-reactor/badge.svg?branch=master" alt="Coverage Status"></a>
-					<a href="https://greenkeeper.io/"><img src="https://badges.greenkeeper.io/michael-stoltz/legacy-reactor.svg" alt="Greenkeeper badge"></a>
 					<a href="https://github.com/prettier/prettier"><img src="https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square" alt="code style: prettier"></a>
 				<a href="https://michael-stoltz.github.io/legacy-reactor/"><img src="https://img.shields.io/badge/docs-typedoc-blue.svg" alt="docs: typedoc"></a></p>
 				<p>Reactor is a standalone implementation of the <a href="https://vuejs.org/">vue</a> 2.x observer code for reactivity.</p>
@@ -117,7 +116,7 @@ observed.qty = <span class="hljs-number">50</span>;
 				<h2 id="watchers">Watchers</h2>
 				<p>Watchers are simple functions that get run when the value of an observed property changes.</p>
 				<p>You can register multiple watchers per property.</p>
-				<pre><code class="language-javascript"><span class="hljs-keyword">import</span> { observe } <span class="hljs-keyword">from</span> <span class="hljs-string">'@microlibs/legacy-reactor'</span>;
+				<pre><code class="language-javascript"><span class="hljs-keyword">import</span> { observe, addPropertyWatcher, removePropertyWatcher } <span class="hljs-keyword">from</span> <span class="hljs-string">'@microlibs/legacy-reactor'</span>;
 
 <span class="hljs-keyword">const</span> observed = observe({
   <span class="hljs-attr">price</span>: <span class="hljs-number">55.6</span>,
@@ -128,14 +127,20 @@ observed.qty = <span class="hljs-number">50</span>;
   },
 });
 
-<span class="hljs-comment">// The first parameter is the path to the property in the observed data.</span>
+<span class="hljs-comment">// The first parameter is an observed object</span>
+<span class="hljs-comment">// The second parameter is the path to the property in the observed data.</span>
 <span class="hljs-comment">// In case of a nested object {nested: {total: 55 }} you would write 'nested.total'.</span>
-<span class="hljs-comment">// The second parameter is the function to be called when the value of total changes.</span>
-observed.$watch(<span class="hljs-string">'total'</span>, (value, oldValue) =&gt; {
+<span class="hljs-comment">// The last parameter is the function to be called when the value of total changes.</span>
+<span class="hljs-keyword">const</span> watcher = addPropertyWatcher(observed, <span class="hljs-string">'total'</span>, (value, oldValue) =&gt; {
   <span class="hljs-built_in">console</span>.log(value, oldValue);
 });
 
-observed.price = <span class="hljs-number">100</span>; <span class="hljs-comment">// output: 10000 5560</span></code></pre>
+observed.price = <span class="hljs-number">100</span>; <span class="hljs-comment">// output: 10000 5560</span>
+
+removePropertyWatcher(observed, <span class="hljs-string">'total'</span>, watcher);
+
+<span class="hljs-comment">// No output since the watcher was removed</span>
+observed.price = <span class="hljs-number">60.56</span>;</code></pre>
 				<h1 id="known-issues">Known Issues</h1>
 				<p>Since the reactor uses the same reactivity mechanism as vue does it comes with the same caveats.</p>
 				<ol>

@@ -3,4 +3,4 @@
  */
 
 /** @ignore */
-export { observe } from './observer';
+export { observe, addPropertyWatcher, removePropertyWatcher } from './observer';
