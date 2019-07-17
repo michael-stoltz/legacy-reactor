@@ -3,9 +3,30 @@ import ComputedObservable from './computed-observable';
 import { IObservable, WatcherFunction } from './types';
 
 /**
+ * Exception thrown when [[observableUpdatesEnabled]] is false and something tries to update an observable.
+ */
+export const OBSERVABLE_UPDATES_DISABLED_EXCEPTION = 'Cannot update observables when updates to them are disabled.';
+
+/**
  * Exception thrown when a [[WatcherFunction]] invocation causes an error.
  */
 const WATCHER_EXCEPTION: string = 'Watcher failed to execute.';
+
+/**
+ * Flag indicating if observables can change their values.
+ *
+ * This will only be false when computed observables are evaluated to prevent side effects.
+ */
+export let observableUpdatesEnabled: boolean = true;
+
+/**
+ * Sets the [[observableUpdatesEnabled]] flag.
+ *
+ * @param shouldUpdate - Value indicating if observables should be allowed to update.
+ */
+export function shouldObservablesUpdate(shouldUpdate: boolean) {
+  observableUpdatesEnabled = shouldUpdate;
+}
 
 /**
  * A [[Observable]] is a value that can be observed for changes.
@@ -126,12 +147,16 @@ export default class Observable<T> implements IObservable<T> {
    * @param value - New value of the observable.
    */
   public update(value: T): void {
-    const oldValue = this.value;
-    this._value = value;
+    if (observableUpdatesEnabled) {
+      const oldValue = this.value;
+      this._value = value;
 
-    this._updateObservers();
+      this._updateObservers();
 
-    this._invokeWatchers(this.value, oldValue);
+      this._invokeWatchers(this.value, oldValue);
+    } else {
+      throw new Error(OBSERVABLE_UPDATES_DISABLED_EXCEPTION);
+    }
   }
 
   /**

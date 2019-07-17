@@ -76,21 +76,29 @@
 								<li class="tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter"><a href="../classes/_observer_observable_.observable.html" class="tsd-kind-icon">Observable</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section tsd-is-not-exported">
+						<section class="tsd-index-section ">
 							<h3>Variables</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-variable tsd-parent-kind-external-module"><a href="_observer_observable_.html#observable_updates_disabled_exception" class="tsd-kind-icon">OBSERVABLE_<wbr>UPDATES_<wbr>DISABLED_<wbr>EXCEPTION</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_observer_observable_.html#watcher_exception" class="tsd-kind-icon">WATCHER_<wbr>EXCEPTION</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-external-module"><a href="_observer_observable_.html#observableupdatesenabled" class="tsd-kind-icon">observable<wbr>Updates<wbr>Enabled</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Functions</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_observer_observable_.html#shouldobservablesupdate" class="tsd-kind-icon">should<wbr>Observables<wbr>Update</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Variables</h2>
-				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
-					<a name="watcher_exception" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagConst">Const</span> WATCHER_<wbr>EXCEPTION</h3>
-					<div class="tsd-signature tsd-kind-icon">WATCHER_<wbr>EXCEPTION<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;Watcher failed to execute.&quot;</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module">
+					<a name="observable_updates_disabled_exception" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> OBSERVABLE_<wbr>UPDATES_<wbr>DISABLED_<wbr>EXCEPTION</h3>
+					<div class="tsd-signature tsd-kind-icon">OBSERVABLE_<wbr>UPDATES_<wbr>DISABLED_<wbr>EXCEPTION<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"Cannot update observables when updates to them are disabled."</span><span class="tsd-signature-symbol"> =&nbsp;&quot;Cannot update observables when updates to them are disabled.&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
 							<li>Defined in observer/observable.ts:8</li>
@@ -98,9 +106,74 @@
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
+							<p>Exception thrown when <a href="_observer_observable_.html#observableupdatesenabled">observableUpdatesEnabled</a> is false and something tries to update an observable.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="watcher_exception" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> WATCHER_<wbr>EXCEPTION</h3>
+					<div class="tsd-signature tsd-kind-icon">WATCHER_<wbr>EXCEPTION<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;Watcher failed to execute.&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in observer/observable.ts:13</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
 							<p>Exception thrown when a <a href="_observer_types_.html#watcherfunction">WatcherFunction</a> invocation causes an error.</p>
 						</div>
 					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module">
+					<a name="observableupdatesenabled" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagLet">Let</span> observable<wbr>Updates<wbr>Enabled</h3>
+					<div class="tsd-signature tsd-kind-icon">observable<wbr>Updates<wbr>Enabled<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;true</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in observer/observable.ts:20</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Flag indicating if observables can change their values.</p>
+						</div>
+						<p>This will only be false when computed observables are evaluated to prevent side effects.</p>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Functions</h2>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module">
+					<a name="shouldobservablesupdate" class="tsd-anchor"></a>
+					<h3>should<wbr>Observables<wbr>Update</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module">
+						<li class="tsd-signature tsd-kind-icon">should<wbr>Observables<wbr>Update<span class="tsd-signature-symbol">(</span>shouldUpdate<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in observer/observable.ts:27</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Sets the <a href="_observer_observable_.html#observableupdatesenabled">observableUpdatesEnabled</a> flag.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>shouldUpdate: <span class="tsd-signature-type">boolean</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Value indicating if observables should be allowed to update.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 		</div>
@@ -144,8 +217,17 @@
 					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="../classes/_observer_observable_.observable.html" class="tsd-kind-icon">Observable</a>
 					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module">
+						<a href="_observer_observable_.html#observable_updates_disabled_exception" class="tsd-kind-icon">OBSERVABLE_<wbr>UPDATES_<wbr>DISABLED_<wbr>EXCEPTION</a>
+					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="_observer_observable_.html#watcher_exception" class="tsd-kind-icon">WATCHER_<wbr>EXCEPTION</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module">
+						<a href="_observer_observable_.html#observableupdatesenabled" class="tsd-kind-icon">observable<wbr>Updates<wbr>Enabled</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module">
+						<a href="_observer_observable_.html#shouldobservablesupdate" class="tsd-kind-icon">should<wbr>Observables<wbr>Update</a>
 					</li>
 				</ul>
 			</nav>

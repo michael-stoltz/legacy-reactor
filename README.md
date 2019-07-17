@@ -64,6 +64,28 @@ observed.qty = 50;
 console.log(observed.total); // output: 3000
 ```
 
+### Side Effects
+
+Computed properties disable data updates within them to keep your data predictable.
+
+Setting the value of data within a computed property will cause an exception.
+
+```typescript
+const observed = observe({
+  price: 10,
+  qty: 5,
+  total() {
+    // okay
+    var value = this.price * this.total;
+
+    // this line will throw an exception
+    this.price = 1000;
+
+    return value;
+  },
+});
+```
+
 ## Watchers
 
 Watchers are simple functions that get run when the value of an observed property changes.

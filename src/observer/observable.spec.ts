@@ -1,5 +1,5 @@
 import consoleReference from 'console';
-import Observable from '../../src/observer/observable';
+import Observable, { OBSERVABLE_UPDATES_DISABLED_EXCEPTION, shouldObservablesUpdate } from '../../src/observer/observable';
 
 global.console = consoleReference;
 const errorOutput = jest.fn();
@@ -253,5 +253,68 @@ describe('Observable', () => {
       // @ts-ignore
       expect(observable._invokeWatchers).toBeCalledTimes(1);
     });
+  });
+});
+
+describe('shouldUpdate', () => {
+  it('is should be true by default', () => {
+    const primitiveObservable = new Observable(1);
+    const objectObservable = new Observable({ name: 'test' });
+    const arrayObservable = new Observable([5, 6, 7]);
+
+    expect(() => primitiveObservable.update(50)).not.toThrow();
+
+    // @ts-ignore
+    expect(() => objectObservable.update({ key: 'value' })).not.toThrow();
+
+    expect(() => arrayObservable.update([1, 2, 3])).not.toThrow();
+
+    expect(() => arrayObservable.value.push(66)).not.toThrow();
+  });
+
+  describe('shouldObservablesUpdate', () => {
+    it('can be used to disable observable updates', () => {
+      const primitiveObservable = new Observable(1);
+      const objectObservable = new Observable({ name: 'test' });
+      const arrayObservable = new Observable([5, 6, 7]);
+
+      shouldObservablesUpdate(false);
+
+      expect(() => primitiveObservable.update(50)).toThrowError(OBSERVABLE_UPDATES_DISABLED_EXCEPTION);
+
+      // @ts-ignore
+      expect(() => objectObservable.update({ key: 'value' })).toThrowError(OBSERVABLE_UPDATES_DISABLED_EXCEPTION);
+
+      expect(() => arrayObservable.update([1, 2, 3])).toThrowError(OBSERVABLE_UPDATES_DISABLED_EXCEPTION);
+
+      // reset value to default
+      shouldObservablesUpdate(true);
+    });
+  });
+
+  it('can be used to re-enable observable updates', () => {
+    const primitiveObservable = new Observable(1);
+    const objectObservable = new Observable({ name: 'test' });
+    const arrayObservable = new Observable([5, 6, 7]);
+
+    shouldObservablesUpdate(false);
+
+    expect(() => primitiveObservable.update(50)).toThrowError(OBSERVABLE_UPDATES_DISABLED_EXCEPTION);
+
+    // @ts-ignore
+    expect(() => objectObservable.update({ key: 'value' })).toThrowError(OBSERVABLE_UPDATES_DISABLED_EXCEPTION);
+
+    expect(() => arrayObservable.update([1, 2, 3])).toThrowError(OBSERVABLE_UPDATES_DISABLED_EXCEPTION);
+
+    shouldObservablesUpdate(true);
+
+    expect(() => primitiveObservable.update(50)).not.toThrow();
+
+    // @ts-ignore
+    expect(() => objectObservable.update({ key: 'value' })).not.toThrow();
+
+    expect(() => arrayObservable.update([1, 2, 3])).not.toThrow();
+
+    expect(() => arrayObservable.value.push(66)).not.toThrow();
   });
 });

@@ -1,5 +1,5 @@
 import { arrayMethods } from '../../src/observer/array';
-import Observable from '../../src/observer/observable';
+import Observable, { OBSERVABLE_UPDATES_DISABLED_EXCEPTION, shouldObservablesUpdate } from '../../src/observer/observable';
 import { ATTACHED_OBSERVABLE_KEY } from '../../src/observer/types';
 
 describe('Array observer helper functionality', () => {
@@ -24,6 +24,20 @@ describe('Array observer helper functionality', () => {
       });
 
       expect(mockObservable.update).toBeCalledTimes(patchedMethods.length);
+    });
+
+    test('patched array mutator methods throw exceptions when observable updates are disabled', () => {
+      const observable = new Observable([1, 2, 3] as any);
+
+      Object.defineProperty(observable.value, ATTACHED_OBSERVABLE_KEY, { value: observable });
+
+      expect(() => arrayMethods.push.call(observable.value, 55)).not.toThrow();
+
+      shouldObservablesUpdate(false);
+
+      expect(() => arrayMethods.push.call(observable.value, 100)).toThrowError(OBSERVABLE_UPDATES_DISABLED_EXCEPTION);
+
+      shouldObservablesUpdate(true);
     });
 
     test('patched array mutator methods still retain their original functionality', () => {
