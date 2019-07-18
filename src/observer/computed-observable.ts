@@ -1,5 +1,5 @@
 import { logError } from '../util';
-import Observable from './observable';
+import Observable, { shouldObservablesUpdate } from './observable';
 import { ComputedFunction } from './types';
 
 /**
@@ -32,12 +32,18 @@ export default class ComputedObservable<T> extends Observable<any> {
 
   /**
    * Safely evaluate the return value of [[_computedFunction]].
+   *
+   * Observables updates are turned off to ensure computed observables have no side effects.
    */
   public evaluate(): T | undefined {
     try {
-      return this._computedFunction();
+      shouldObservablesUpdate(false);
+      const value = this._computedFunction();
+      return value;
     } catch (exception) {
       logError(COMPUTED_FUNCTION_EXCEPTION, exception);
+    } finally {
+      shouldObservablesUpdate(true);
     }
     return undefined;
   }

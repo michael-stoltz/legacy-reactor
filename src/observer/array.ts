@@ -3,7 +3,7 @@
  */
 /** @ignore */
 import { defineReactiveProperty, observeObject } from '.';
-import Observable from './observable';
+import Observable, { OBSERVABLE_UPDATES_DISABLED_EXCEPTION, observableUpdatesEnabled } from './observable';
 import { IObservable, IObservableReference } from './types';
 
 /**
@@ -21,25 +21,29 @@ export const arrayMethods: typeof Array.prototype = Object.create(Array.prototyp
   // Make the current iterator method a mutator function
   Object.defineProperty(arrayMethods, method, {
     value: function mutator<T extends T[]>(this: T & IObservableReference<any[]>): any {
-      const result = original.apply(this, arguments);
-      const observable: IObservable<any[]> = this.__observable__;
+      if (observableUpdatesEnabled) {
+        const result = original.apply(this, arguments);
+        const observable: IObservable<any[]> = this.__observable__;
 
-      switch (method) {
-        // Purpose fall through since both methods use the same logic
-        case 'push':
-        case 'unshift':
-          observeArrayItems(this, this.length - arguments.length, this.length);
-          break;
-        case 'splice':
-          let insertedAmount = arguments.length - arguments[1];
-          insertedAmount = insertedAmount < 0 ? 0 : insertedAmount;
-          observeArrayItems(this, this.length - insertedAmount, this.length);
-          break;
+        switch (method) {
+          // Purpose fall through since both methods use the same logic
+          case 'push':
+          case 'unshift':
+            observeArrayItems(this, this.length - arguments.length, this.length);
+            break;
+          case 'splice':
+            let insertedAmount = arguments.length - arguments[1];
+            insertedAmount = insertedAmount < 0 ? 0 : insertedAmount;
+            observeArrayItems(this, this.length - insertedAmount, this.length);
+            break;
+        }
+
+        observable.update(this);
+
+        return result;
+      } else {
+        throw new Error(OBSERVABLE_UPDATES_DISABLED_EXCEPTION);
       }
-
-      observable.update(this);
-
-      return result;
     },
   });
 });

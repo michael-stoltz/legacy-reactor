@@ -114,6 +114,22 @@ observed.price = <span class="hljs-number">60</span>;
 
 observed.qty = <span class="hljs-number">50</span>;
 <span class="hljs-built_in">console</span>.log(observed.total); <span class="hljs-comment">// output: 3000</span></code></pre>
+				<h3 id="side-effects">Side Effects</h3>
+				<p>Computed properties disable data updates within them to keep your data predictable.</p>
+				<p>Setting the value of data within a computed property will cause an exception.</p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> observed = observe({
+  price: <span class="hljs-number">10</span>,
+  qty: <span class="hljs-number">5</span>,
+  total() {
+    <span class="hljs-comment">// okay</span>
+    <span class="hljs-keyword">var</span> value = <span class="hljs-keyword">this</span>.price * <span class="hljs-keyword">this</span>.total;
+
+    <span class="hljs-comment">// this line will throw an exception</span>
+    <span class="hljs-keyword">this</span>.price = <span class="hljs-number">1000</span>;
+
+    <span class="hljs-keyword">return</span> value;
+  },
+});</code></pre>
 				<h2 id="watchers">Watchers</h2>
 				<p>Watchers are simple functions that get run when the value of an observed property changes.</p>
 				<p>You can register multiple watchers per property.</p>
