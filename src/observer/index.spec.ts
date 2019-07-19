@@ -69,6 +69,28 @@ describe('observer functions', () => {
         validatePropertyObserved(target.array, 0);
       });
 
+      it('allows user defined getters', () => {
+        let num = 10;
+        const target = {
+          // @ts-ignore
+          get number(): string | number {
+            return num;
+          },
+          // @ts-ignore
+          set number(stringNumber: string) {
+            num = Number(stringNumber) * 2;
+          },
+        };
+        defineReactiveProperty(target, 'number', new Observable(10));
+
+        expect(num).toBe(target.number);
+
+        target.number = '13';
+
+        expect(target.number).toBe(num);
+        expect(num).toBe(26);
+      });
+
       describe('property getter functionality', () => {
         it('returns the observable value if no argument is passed to the getter', () => {
           const target = {};
@@ -139,7 +161,6 @@ describe('observer functions', () => {
 
         it('does not call the observable update function when you change the value to the current value ', () => {
           const data = createTestObject();
-          delete data.getter;
           const observables: Array<Observable<any>> = [];
 
           for (const key in data) {
@@ -155,6 +176,7 @@ describe('observer functions', () => {
 
           // Primitives
           data.number = 5;
+          data.getter = 2.5;
           data.string = 'test';
           data.boolean = false;
           data.array[0] = 1;
@@ -771,6 +793,7 @@ const SKIP_RECURSIVE_CHECK = 'SKIP_RECURSIVE_CHECK';
  * DO NOT CHANGE THIS DATA AS IT WILL INVALIDATE THE TESTS THAT DEPEND ON THEM
  */
 export function createTestObject() {
+  let getterValue = 5;
   return {
     number: 5,
     string: 'test',
@@ -778,10 +801,10 @@ export function createTestObject() {
     nestedObject: { key: 'value', array: [5, 6] },
     array: [1, [2, 3], { name: 'name' }],
     get getter() {
-      return this.number;
+      return getterValue;
     },
     set getter(value: any) {
-      //
+      getterValue = value * 2;
     },
     method() {
       return this.nestedObject;

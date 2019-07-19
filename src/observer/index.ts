@@ -121,6 +121,10 @@ export function observeObject<T extends object>(data: T, observable?: IObservabl
  * @typeparam T - Any valid javascript value.
  */
 export function defineReactiveProperty<T>(obj: object, key: string | number, observable: IObservable<T>) {
+  const propertyDescriptor = Object.getOwnPropertyDescriptor(obj, key);
+  const getter = propertyDescriptor ? propertyDescriptor.get : undefined;
+  const setter = propertyDescriptor ? propertyDescriptor.set : undefined;
+
   Object.defineProperty(obj, key, {
     get() {
       if (arguments[0] === true) {
@@ -129,11 +133,15 @@ export function defineReactiveProperty<T>(obj: object, key: string | number, obs
         if (currentEvaluatingObservable) {
           observable.observe(currentEvaluatingObservable as ComputedObservable<T>);
         }
-        return observable.value;
+        return getter ? getter.call(obj) : observable.value;
       }
     },
     // prettier-ignore
-    set: observable instanceof ComputedObservable ? () => { /* */ } : function (newValue: T) {
+    set: observable instanceof ComputedObservable ? () => { /* */ } : function (newValue: T) {      
+      if (setter) {
+        setter.call(obj, newValue);
+      }
+      newValue = getter ? getter.call(obj): newValue;
       if (newValue !== observable.value) {
         observeObject(newValue as unknown as object, observable as unknown as IObservable<object>);
         observable.update(newValue);
