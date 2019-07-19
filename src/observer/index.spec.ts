@@ -8,7 +8,7 @@ import {
 } from '../../src/observer';
 import { arrayMethods } from '../../src/observer/array';
 import ComputedObservable from '../../src/observer/computed-observable';
-import Observable from '../../src/observer/observable';
+import Observable, { OBSERVABLE_UPDATES_DISABLED_EXCEPTION } from '../../src/observer/observable';
 import { ATTACHED_OBSERVABLE_KEY } from '../../src/observer/types';
 import { isObject, prototypeAugment } from '../../src/util';
 
@@ -69,7 +69,7 @@ describe('observer functions', () => {
         validatePropertyObserved(target.array, 0);
       });
 
-      it('allows user defined getters', () => {
+      it('allows user defined getters and setters', () => {
         let num = 10;
         const target = {
           // @ts-ignore
@@ -89,6 +89,27 @@ describe('observer functions', () => {
 
         expect(target.number).toBe(num);
         expect(num).toBe(26);
+      });
+
+      test('user defined getters can not have side effects', () => {
+        let num = 10;
+        const target: any = {
+          // @ts-ignore
+          get number(): string | number {
+            this.data = 55;
+
+            return num;
+          },
+          // @ts-ignore
+          set number(stringNumber: string) {
+            num = Number(stringNumber) * 2;
+          },
+        };
+        defineReactiveProperty(target, 'number', new Observable(10));
+
+        defineReactiveProperty(target, 'data', new Observable('test'));
+
+        expect(() => target.number).toThrowError(new Error(OBSERVABLE_UPDATES_DISABLED_EXCEPTION));
       });
 
       describe('property getter functionality', () => {

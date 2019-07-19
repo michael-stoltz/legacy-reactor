@@ -6,7 +6,7 @@
 import { isObject, isPlainObject, prototypeAugment } from '../util';
 import { arrayMethods } from './array';
 import ComputedObservable from './computed-observable';
-import Observable from './observable';
+import Observable, { shouldObservablesUpdate } from './observable';
 import { ATTACHED_OBSERVABLE_KEY, ComputedFunction, IObservable, IObservableReference, ObservedData, WatcherFunction } from './types';
 
 /**
@@ -133,7 +133,10 @@ export function defineReactiveProperty<T>(obj: object, key: string | number, obs
         if (currentEvaluatingObservable) {
           observable.observe(currentEvaluatingObservable as ComputedObservable<T>);
         }
-        return getter ? getter.call(obj) : observable.value;
+        shouldObservablesUpdate(false);
+        const value = getter ? getter.call(obj) : observable.value;
+        shouldObservablesUpdate(true);
+        return value;
       }
     },
     // prettier-ignore
