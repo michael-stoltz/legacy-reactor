@@ -7,7 +7,7 @@
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://prettier.io/)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://semantic-release.gitbook.io/semantic-release/)
 [![linter: eslint](https://img.shields.io/badge/linter-eslint-blue.svg)](https://github.com/typescript-eslint/typescript-eslint)
-[![docs: gh-pages](https://img.shields.io/badge/docs-gh--pages-blue.svg)](https://amaya-loves-tea.github.io/legacy-reactor/)
+[![docs: gh-pages](https://img.shields.io/badge/docs-gh--pages-blue.svg)](https://michael-stoltz.github.io/legacy-reactor/)
 [![dependencies: status](https://david-dm.org/michael-stoltz/legacy-reactor/status.svg)](https://david-dm.org/michael-stoltz/legacy-reactor)
 [![dev-dependencies: status](https://david-dm.org/michael-stoltz/legacy-reactor/dev-status.svg)](https://david-dm.org/michael-stoltz/legacy-reactor?type=dev)
 [![npm (scoped)](https://img.shields.io/npm/v/@microlibs/legacy-reactor?label=npm%20package)](https://www.npmjs.com/package/@microlibs/legacy-reactor)
