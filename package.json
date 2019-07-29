@@ -21,7 +21,6 @@
     "clean": "rimraf dist && rimraf coverage && rimraf docs",
     "build": "run-s clean && run-p build:*",
     "build:main": "tsc -p tsconfig.json",
-    "build:module": "tsc -p tsconfig.module.json",
     "test": "jest --config jestconfig.json",
     "test:watch": "jest --config jestconfig.json --watch",
     "cov": "run-s test && run-s cov:open",
