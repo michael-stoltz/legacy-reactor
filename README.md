@@ -102,3 +102,99 @@ The following [launch configurations](https://code.visualstudio.com/docs/editor/
 - `Current TS File` - debug current typescript file.
 - `Current Jest Test` - debug current jest test.
 - `All Jest Tests` - debug all jest tests.
+
+## Usage
+
+### Computed properties
+
+Computed properties are properties that get their value from other properties.
+
+When you change one of the properties it relies on it will automatically be recalculated.
+
+```javascript
+import { observe } from '@microlibs/legacy-reactor';
+
+const observed = observe({
+  price: 55.6,
+  qty: 100,
+  // Any function in this object is treated as a computed property definition.
+  total() {
+    return this.price * this.total;
+  },
+});
+
+console.log(observed.total); // output: 5560
+
+observed.price = 60;
+console.log(observed.total); // output: 6000
+
+observed.qty = 50;
+console.log(observed.total); // output: 3000
+```
+
+#### Side Effects
+
+Computed properties disable data updates within them to keep your data predictable.
+
+Setting the value of data within a computed property will cause an exception.
+
+```typescript
+const observed = observe({
+  price: 10,
+  qty: 5,
+  total() {
+    // okay
+    var value = this.price * this.total;
+
+    // this line will throw an exception
+    this.price = 1000;
+
+    return value;
+  },
+});
+```
+
+### Watchers
+
+Watchers are simple functions that get run when the value of an observed property changes.
+
+You can register multiple watchers per property.
+
+```javascript
+import { observe, addPropertyWatcher, removePropertyWatcher } from '@microlibs/legacy-reactor';
+
+const observed = observe({
+  price: 55.6,
+  qty: 100,
+  // Any function in this object is treated as a computed property definition.
+  total() {
+    return this.price * this.total;
+  },
+});
+
+// The first parameter is an observed object
+// The second parameter is the path to the property in the observed data.
+// In case of a nested object {nested: {total: 55 }} you would write 'nested.total'.
+// The last parameter is the function to be called when the value of total changes.
+const watcher = addPropertyWatcher(observed, 'total', (value, oldValue) => {
+  console.log(value, oldValue);
+});
+
+observed.price = 100; // output: 10000 5560
+
+removePropertyWatcher(observed, 'total', watcher);
+
+// No output since the watcher was removed
+observed.price = 60.56;
+```
+
+## Known Issues
+
+Since the reactor uses the same reactivity mechanism as vue does it comes with the same caveats.
+
+1. Adding properties to an observed object is not tracked.
+2. Deleting properties from an observed object is not tracked.
+   > Due to the above two caveats we decided to seal the observed object.
+   > Therefore you cannot add or remove properties once you have created an observed object.
+3. Reassigning array length is not tracked.
+   > It is not possible to define a getter on the length property since it is not configurable.
