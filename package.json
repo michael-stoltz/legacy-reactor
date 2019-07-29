@@ -1,0 +1,62 @@
+{
+  "name": "@microlibs/legacy-reactor",
+  "version": "0.5.0",
+  "description": "Reactive state library based on the vue.js 2.x observer code",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "repository": "https://github.com/michael-stoltz/legacy-reactor",
+  "author": "michael.stoltz@derivco.co.za",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "/dist/**/*"
+  ],
+  "scripts": {
+    "style": "run-s style:*",
+    "style:format": "prettier --write \"src/**/*.ts\"",
+    "style:lint": "eslint src --ext .js,.ts --fix",
+    "commit": "git-cz",
+    "clean": "rimraf dist && rimraf coverage && rimraf docs",
+    "build": "run-s clean && run-p build:*",
+    "build:main": "tsc -p tsconfig.json",
+    "build:module": "tsc -p tsconfig.module.json",
+    "test": "jest --config jestconfig.json",
+    "test:watch": "jest --config jestconfig.json --watch",
+    "cov": "run-s test && run-s cov:open",
+    "cov:open": "open-cli coverage/lcov-report/index.html",
+    "cov:publish": "codecov",
+    "doc": "typedoc src && run-s doc:open",
+    "doc:open": "open-cli docs/index.html",
+    "doc:publish": "gh-pages -t -m \"chore: update docs\" -d docs",
+    "release": "semantic-release"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@commitlint/cli": "^8.0.0",
+    "@commitlint/config-conventional": "^8.0.0",
+    "@types/jest": "^24.0.15",
+    "@types/node": "^12.0.12",
+    "@typescript-eslint/eslint-plugin": "^1.11.0",
+    "@typescript-eslint/parser": "^1.11.0",
+    "codecov": "^3.5.0",
+    "commitizen": "^4.0.1",
+    "cz-conventional-changelog": "3.0.2",
+    "eslint": "^6.0.1",
+    "eslint-config-prettier": "^6.0.0",
+    "gh-pages": "^2.0.1",
+    "husky": "^3.0.0",
+    "jest": "^24.8.0",
+    "npm-run-all": "^4.1.5",
+    "open-cli": "^5.0.0",
+    "prettier": "^1.18.2",
+    "rimraf": "^2.6.3",
+    "semantic-release": "^15.13.18",
+    "ts-jest": "^24.0.2",
+    "ts-node": "^8.3.0",
+    "typedoc": "^0.15.0",
+    "typedoc-plugin-nojekyll": "^1.0.1",
+    "typescript": "^3.5.2"
+  }
+}
